@@ -1,0 +1,44 @@
+---
+title: "Final_proj"
+output: html_document
+date: "2023-05-06"
+---
+```{r}
+library(tidyverse)
+
+```
+
+```{r}
+l<-load("recovery.Rdata")
+dat <- eval(parse(text = l))
+head(dat)
+
+set.seed(5296)
+data.1 <- dat[sample(1:10000, 2000),]
+```
+
+```{r}
+set.seed(5095)
+data.2 <- dat[sample(1:10000, 2000),] 
+```
+
+```{r}
+reco.data<-merge(data.1, data.2)
+head(reco.data)
+```
+
+
+```{r}
+reco.data<-reco.data%>%
+  mutate(recovery_time = ifelse(recovery_time>30,1,0))
+```
+
+## Including Plots
+
+You can also embed plots, for example:
+
+```{r pressure, echo=FALSE}
+plot(pressure)
+```
+
+Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
