@@ -1,11 +1,10 @@
 ---
 title: "Final_proj"
-output: html_document
+output: pdf_document
 date: "2023-05-06"
 ---
 ```{r}
 library(tidyverse)
-
 library(mlbench)
 library(caret)
 library(glmnet)
@@ -23,9 +22,7 @@ library(rpart.plot)
 l<-load("recovery.Rdata")
 
 dat <- eval(parse(text = l))%>%
-  mutate(study = factor(study))
-
-dat <- eval(parse(text = l))
+  mutate(study = factor(study))   
 
 head(dat)
 
@@ -42,8 +39,6 @@ data.2 <- dat[sample(1:10000, 2000),]
 
 reco.data<-rbind(data.1, data.2)%>%
   unique.array()
-
-reco.data<-merge(data.1, data.2)
 
 head(reco.data)
 ```
@@ -132,26 +127,4 @@ confusionMatrix(data = lda.pred,
 
 ```
 
-### Classfication Trees
-```{r}
-set.seed(2023)
-rpart.fit <- train( y = y_train.bin ,
-                    x = x_train.bin,
-                   method = "rpart",
-                   tuneGrid = data.frame(cp = exp(seq(-6,-5, len = 50))),
-                   trControl = ctrl.prob,
-                   metric = "ROC")
-ggplot(rpart.fit, highlight = TRUE)
-
-```
-
-```{r}
-rpart.fit$bestTune
-rpart.plot(rpart.fit$finalModel)
-pred.rpart <- predict(rpart.fit, newdata  = x_test.bin)
-confusionMatrix(data = pred.rpart,
-                reference = y_test.bin)
-
-
-```
 
