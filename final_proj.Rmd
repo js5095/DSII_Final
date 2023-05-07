@@ -228,6 +228,7 @@ ggplot(rpart.fit, highlight = TRUE)
 ```
 
 ```{r}
+rpart.fit$bestTune
 rpart.plot(rpart.fit$finalModel)
 ```
 
