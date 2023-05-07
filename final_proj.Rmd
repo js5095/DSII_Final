@@ -66,6 +66,9 @@ y_test.bin <- test_set.bin$recovery_time
 ### EDA
 ```{r}
 table(y_train.bin)
+ggplot(training_set.bin, aes(y_train.bin)) + 
+  geom_bar()+
+  ggtitle("Recovery")
 ```
 
 ```{r}
@@ -147,11 +150,11 @@ plot(smooth(roc.logit), col = 4, add = TRUE)
 
 # Confusion Matrix
 logit.pred.2 <- predict(logit.fit, newdata  = x_test.bin)
-confusionMatrix(data = logit.pred.2,
-                reference = y_test.bin)
+confusionMatrix(data = logit.pred.2   ,
+                 y_test.bin)
 
 ```
-The accuracy of logistic regression with the best tunning parameter is 0.7149
+The accuracy of logistic regression with the best tunning parameter is 0.6885
 
 
 ### MARS
@@ -168,6 +171,9 @@ mars.fit <- train(x = x_train.bin,
 
 ```{r}
 #performance
+plot(mars.fit)
+mars.fit$bestTune
+coef(mars.fit$finalModel)%>%knitr::kable()
 # ROC Curve
 pred.mars.1 <- predict(mars.fit, newdata  = x_test.bin, type = "prob")[,2]
 mars.roc <- roc(y_test.bin, pred.mars.1)
@@ -187,11 +193,13 @@ lda.fit <- train(x = x_train.bin,
                    method = "lda",
                    metric = "ROC",
                    trControl = ctrl)
+plot(lda(y_train.bin~x_train.bin))
 ```
 
 ```{r}
 
 #Performance
+
 
 # ROC Curve
 pred.lda.1 <- predict(lda.fit, newdata  = x_test.bin, type = "prob")[,2]
@@ -221,7 +229,6 @@ ggplot(rpart.fit, highlight = TRUE)
 
 ```{r}
 rpart.plot(rpart.fit$finalModel)
-
 ```
 
 ```{r}
