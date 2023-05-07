@@ -119,6 +119,7 @@ ggplot(data = training_set.bin, aes(x = study, fill = recovery_time)) +
 ```
 
 ### logistic Regression
+
 ```{r}
 ctrl <- trainControl(method = "repeatedcv",
                      summaryFunction = twoClassSummary,
@@ -241,9 +242,74 @@ confusionMatrix(data = rpart.pred.2,
 
 ```
 
+## SVM
+
+```{r}
+# kernlab
+set.seed(1)
+svml.fit <- train(recovery_time ~ . , 
+                  data = training_set.bin, 
+                  method = "svmLinear",# C parameter as kernlab
+                  tuneGrid = data.frame(C = exp(seq(-5,2,len=50))),
+                  trControl = ctrl)
+
+plot(svml.fit, highlight = TRUE, xTrans = log)
+
+# e1071
+set.seed(1)
+svml.fit2 <- train(recovery_time ~ . , 
+                   data = training_set.bin, 
+                   method = "svmLinear2",# C parameter as
+                   tuneGrid = data.frame(cost = exp(seq(-5,2,len=50))),
+                   trControl = ctrl)
+
+plot(svml.fit2, highlight = TRUE, xTrans = log)
+
+# radialsigma
+
+svmr.grid <- expand.grid(C = exp(seq(1,7,len=50)),
+                         sigma = exp(seq(-10,-2,len=20)))
+
+# tunes over both cost and sigma=gamma
+set.seed(1)             
+svmr.fit <- train(recovery_time ~ . , 
+                  data = reco.data.bin, 
+                  subset = rowtrain,
+                  method = "svmRadialSigma",
+                  tuneGrid = svmr.grid,
+                  trControl = ctrl)
+
+myCol<- rainbow(25)
+myPar <- list(superpose.symbol = list(col = myCol),
+              superpose.line = list(col = myCol))
+
+plot(svmr.fit, highlight = TRUE, par.settings = myPar)
+```
+
+
+## Prediction 
+
+```{r}
+pred.svml <- predict(svml.fit, newdata = reco.data.bin[-rowTrain,])
+pred.svmr <- predict(svmr.fit, newdata = reco.data.bin[-rowTrain,])
+
+confusionMatrix(data = pred.svml, 
+                reference = reco.data.bin$recovery_time[-rowTrain])
+
+confusionMatrix(data = pred.svmr, 
+                reference = reco.data.bin$recovery_time[-rowTrain])
+```
+
+
 ### Model Comparison
 ```{r}
 set.seed(2023)
-res <- resamples(list(Logit = logit.fit, Mars = mars.fit, lda = lda.fit, rpart=rpart.fit))
+res <- resamples(list(Logit = logit.fit, Mars = mars.fit, lda = lda.fit, rpart=rpart.fit, svml = svml.fit, svmr =svmr.fit ))
 summary(res)
+
+png(file="comparison.png", height=1800, width=1800, units = "px", res=200)
+bwplot(resamp, metric = "RMSE")
 ```
+
+
+
