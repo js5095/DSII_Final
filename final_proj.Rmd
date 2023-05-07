@@ -5,6 +5,7 @@ date: "2023-05-06"
 ---
 ```{r}
 library(tidyverse)
+library(ggplot2)
 library(mlbench)
 library(caret)
 library(glmnet)
@@ -22,7 +23,7 @@ library(rpart.plot)
 l<-load("recovery.Rdata")
 
 dat <- eval(parse(text = l))%>%
-  mutate(study = factor(study))   
+  mutate(study = factor(study))
 
 head(dat)
 
@@ -38,7 +39,8 @@ data.2 <- dat[sample(1:10000, 2000),]
 ```{r}
 
 reco.data<-rbind(data.1, data.2)%>%
-  unique.array()
+  unique.array()%>%
+  dplyr::select(-id)
 
 head(reco.data)
 ```
@@ -52,13 +54,68 @@ reco.data.bin<-reco.data%>%
 
 ```{r}
 set.seed(2023)
-rowtrain <- createDataPartition(y=reco.data$recovery_time, p=0.8, list=FALSE)
+rowtrain <- createDataPartition(y=reco.data.bin$recovery_time, p=0.8, list=FALSE)
 training_set.bin <- reco.data.bin[rowtrain,]
 test_set.bin <- reco.data.bin[-rowtrain,]
 x_train.bin <- model.matrix(recovery_time~.,training_set.bin)[,-1]
 y_train.bin <- training_set.bin$recovery_time
 x_test.bin <- model.matrix(recovery_time~.,test_set.bin)[,-1]
 y_test.bin <- test_set.bin$recovery_time
+```
+
+### EDA
+```{r}
+table(y_train.bin)
+```
+
+```{r}
+# recovery_time - 
+ggplot(training_set.bin, aes(x = recovery_time, y=age, fill = recovery_time)) + 
+  geom_boxplot()+
+  ggtitle("recovery_time-age")
+
+ggplot(training_set.bin, aes(x = recovery_time, y=bmi, fill = recovery_time)) + 
+  geom_boxplot()+
+  ggtitle("recovery_time-bmi")
+
+ggplot(training_set.bin, aes(x = recovery_time, y=SBP, fill = recovery_time)) + 
+  geom_boxplot()+
+  ggtitle("recovery_time-SBP")
+
+ggplot(training_set.bin, aes(x = recovery_time, y=LDL, fill = recovery_time)) + 
+  geom_boxplot()+
+  ggtitle("recovery_time-LDL")
+```
+
+```{r}
+# Recovery time and categorical data
+ggplot(data = training_set.bin, aes(x = gender, fill = recovery_time)) +
+  geom_bar(position = "fill") + 
+  ggtitle("time-gender")
+
+ggplot(data = training_set.bin, aes(x = race, fill = recovery_time)) +
+  geom_bar(position = "fill") + 
+  ggtitle("time-race")
+ggplot(data = training_set.bin, aes(x = smoking, fill = recovery_time)) +
+  geom_bar(position = "fill") + 
+  ggtitle("time-smoking")
+ggplot(data = training_set.bin, aes(x = hypertension, fill = recovery_time)) +
+  geom_bar(position = "fill") + 
+  ggtitle("time-hypertension")
+ggplot(data = training_set.bin, aes(x = diabetes, fill = recovery_time)) +
+  geom_bar(position = "fill") + 
+  ggtitle("time-diabetes")
+ggplot(data = training_set.bin, aes(x = vaccine, fill = recovery_time)) +
+  geom_bar(position = "fill") + 
+  ggtitle("time-vaccine")
+ggplot(data = training_set.bin, aes(x = severity, fill = recovery_time)) +
+  geom_bar(position = "fill") + 
+  ggtitle("time-severity")
+ggplot(data = training_set.bin, aes(x = study, fill = recovery_time)) +
+  geom_bar(position = "fill") + 
+  ggtitle("time-study")
+
+
 ```
 
 ### logistic Regression
@@ -77,9 +134,20 @@ logit.fit$bestTune
 
 ```{r}
 # Performance
-pred.logit <- predict(logit.fit, newdata  = x_test.bin)
-confusionMatrix(data = pred.logit,
+
+
+# ROC Curve
+
+pred.logit.1 <- predict(logit.fit, newdata  = x_test.bin, type = "prob")[,2]
+roc.logit <- roc(y_test.bin, pred.logit)
+plot(roc.logit, legacy.axes = TRUE, print.auc = TRUE)
+plot(smooth(roc.logit), col = 4, add = TRUE)
+
+# Confusion Matrix
+logit.pred.2 <- predict(logit.fit, newdata  = x_test.bin)
+confusionMatrix(data = logit.pred.2,
                 reference = y_test.bin)
+
 ```
 The accuracy of logistic regression with the best tunning parameter is 0.7149
 
@@ -105,8 +173,15 @@ mars.fit <- train(x = x_train.bin,
 
 ```{r}
 #performance
-pred.mars <- predict(mars.fit, newdata  = x_test.bin)
-confusionMatrix(data = pred.mars,
+# ROC Curve
+pred.mars.1 <- predict(mars.fit, newdata  = x_test.bin, type = "prob")[,2]
+mars.roc <- roc(y_test.bin, pred.mars.1)
+plot(mars.roc, legacy.axes = TRUE, print.auc = TRUE)
+plot(smooth(mars.roc), col = 4, add = TRUE)
+
+# Confusion Matrix
+pred.mars.2 <- predict(mars.fit, newdata  = x_test.bin)
+confusionMatrix(data = pred.mars.2,
                 reference = y_test.bin)
 ```
 ### LDA
@@ -121,10 +196,63 @@ lda.fit <- train(x = x_train.bin,
 ```{r}
 
 #Performance
-lda.pred <- predict(lda.fit, newdata  = x_test.bin)
+
+# ROC Curve
+pred.lda.1 <- predict(lda.fit, newdata  = x_test.bin, type = "prob")[,2]
+lda.roc <- roc(y_test.bin, pred.lda.1)
+plot(lda.roc, legacy.axes = TRUE, print.auc = TRUE)
+plot(smooth(lda.roc), col = 4, add = TRUE)
+
+# Confusion Matrix
+lda.pred.2 <- predict(lda.fit, newdata  = x_test.bin)
 confusionMatrix(data = lda.pred,
                 reference = y_test.bin)
 
 ```
 
+```{r}
+ctrl.prob <- trainControl(method = "cv",
+                     summaryFunction = twoClassSummary,
+                     classProbs = TRUE)
+set.seed(2023)
+rpart.fit <- train(x=x_train.bin, y = y_train.bin,
+                       method = "rpart",
+                       tuneGrid = data.frame(cp = exp(seq(-8,-5, len = 50))),
+                       trControl = ctrl.prob,
+                       metric = "ROC")
+ggplot(rpart.fit, highlight = TRUE)
 
+
+```
+
+```{r}
+rpart.plot(rpart.fit$finalModel)
+
+```
+
+```{r}
+
+# Performance
+
+# ROC Curve
+pred.rpart.1 <- predict(rpart.fit, newdata  = x_test.bin, type = "prob")[,2]
+rpart.roc <- roc(y_test.bin, pred.rpart.1)
+plot(rpart.roc, legacy.axes = TRUE, print.auc = TRUE)
+plot(smooth(rpart.roc), col = 4, add = TRUE)
+
+# Confusion Matrix
+rpart.pred.2 <- predict(rpart.fit, newdata = x_test.bin)
+confusionMatrix(data = rpart.pred,
+                reference = y_test.bin)
+
+```
+
+### Model Comparison
+```{r}
+set.seed(2023)
+res <- resamples(list(Logit = logit.fit, LDA = lda.fit, MARS = mars.fit, rpart = rpart.fit))
+summary(res)
+
+
+
+```
