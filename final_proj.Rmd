@@ -120,16 +120,18 @@ ggplot(data = training_set.bin, aes(x = study, fill = recovery_time)) +
 
 ### logistic Regression
 ```{r}
-ctrl <-  trainControl(method = 'repeatedcv')
+ctrl <- trainControl(method = "repeatedcv",
+                     summaryFunction = twoClassSummary,
+                      classProbs = TRUE)
+
 set.seed(2023)
 
-logit.fit <- train(x= x_train.bin , 
+logit.fit <- train(x= x_train.bin, 
                   y= y_train.bin, 
-                  method = 'glmnet',
-                  trControl = ctrl,
-                  family = 'binomial' )
-plot(logit.fit)
-logit.fit$bestTune
+                  method = 'glm',
+                  metric = "ROC",
+                  family = binomial(),
+                  trControl = ctrl )
 ```
 
 ```{r}
@@ -139,7 +141,7 @@ logit.fit$bestTune
 # ROC Curve
 
 pred.logit.1 <- predict(logit.fit, newdata  = x_test.bin, type = "prob")[,2]
-roc.logit <- roc(y_test.bin, pred.logit)
+roc.logit <- roc(y_test.bin, pred.logit.1)
 plot(roc.logit, legacy.axes = TRUE, print.auc = TRUE)
 plot(smooth(roc.logit), col = 4, add = TRUE)
 
@@ -153,13 +155,6 @@ The accuracy of logistic regression with the best tunning parameter is 0.7149
 
 
 ### MARS
-```{r warning=FALSE}
-
-ctrl.prob <- trainControl(method = "cv",
-                     summaryFunction = twoClassSummary,
-                     classProbs = TRUE) 
-```
-
 ```{r}
 set.seed(2023)
 mars.fit <- train(x = x_train.bin,
@@ -168,7 +163,7 @@ mars.fit <- train(x = x_train.bin,
                     tuneGrid = expand.grid(degree = 1:3,
                     nprune = 2:19),
                     metric = "ROC",
-                    trControl = ctrl.prob)
+                    trControl = ctrl)
 ```
 
 ```{r}
@@ -190,6 +185,7 @@ confusionMatrix(data = pred.mars.2,
 lda.fit <- train(x = x_train.bin,
                    y = y_train.bin,
                    method = "lda",
+                   metric = "ROC",
                    trControl = ctrl)
 ```
 
@@ -205,20 +201,18 @@ plot(smooth(lda.roc), col = 4, add = TRUE)
 
 # Confusion Matrix
 lda.pred.2 <- predict(lda.fit, newdata  = x_test.bin)
-confusionMatrix(data = lda.pred,
+confusionMatrix(data = lda.pred.2,
                 reference = y_test.bin)
 
 ```
 
 ```{r}
-ctrl.prob <- trainControl(method = "cv",
-                     summaryFunction = twoClassSummary,
-                     classProbs = TRUE)
+
 set.seed(2023)
 rpart.fit <- train(x=x_train.bin, y = y_train.bin,
                        method = "rpart",
                        tuneGrid = data.frame(cp = exp(seq(-8,-5, len = 50))),
-                       trControl = ctrl.prob,
+                       trControl = ctrl,
                        metric = "ROC")
 ggplot(rpart.fit, highlight = TRUE)
 
@@ -242,7 +236,7 @@ plot(smooth(rpart.roc), col = 4, add = TRUE)
 
 # Confusion Matrix
 rpart.pred.2 <- predict(rpart.fit, newdata = x_test.bin)
-confusionMatrix(data = rpart.pred,
+confusionMatrix(data = rpart.pred.2,
                 reference = y_test.bin)
 
 ```
@@ -250,9 +244,6 @@ confusionMatrix(data = rpart.pred,
 ### Model Comparison
 ```{r}
 set.seed(2023)
-res <- resamples(list(Logit = logit.fit, LDA = lda.fit, MARS = mars.fit, rpart = rpart.fit))
+res <- resamples(list(Logit = logit.fit, Mars = mars.fit, lda = lda.fit, rpart=rpart.fit))
 summary(res)
-
-
-
 ```
