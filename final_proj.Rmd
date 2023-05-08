@@ -63,7 +63,7 @@ x_test.bin <- model.matrix(recovery_time~.,test_set.bin)[,-1]
 y_test.bin <- test_set.bin$recovery_time
 ```
 
-### EDA
+## EDA
 ```{r}
 table(y_train.bin)
 ggplot(training_set.bin, aes(y_train.bin)) + 
@@ -72,54 +72,20 @@ ggplot(training_set.bin, aes(y_train.bin)) +
 ```
 
 ```{r}
-# recovery_time - 
-ggplot(training_set.bin, aes(x = recovery_time, y=age, fill = recovery_time)) + 
-  geom_boxplot()+
-  ggtitle("recovery_time-age")
+p1 <- ggplot(training_set.bin,aes(x = recovery_time, y = age)) +
+  geom_boxplot()
+p2 <- ggplot(training_set.bin,aes(x = recovery_time, y = bmi)) +
+  geom_boxplot()
+p3 <- ggplot(training_set.bin,aes(x = recovery_time, y = SBP)) +
+  geom_boxplot()
+p4 <- ggplot(training_set.bin,aes(x = recovery_time, y = LDL)) +
+  geom_boxplot()
 
-ggplot(training_set.bin, aes(x = recovery_time, y=bmi, fill = recovery_time)) + 
-  geom_boxplot()+
-  ggtitle("recovery_time-bmi")
-
-ggplot(training_set.bin, aes(x = recovery_time, y=SBP, fill = recovery_time)) + 
-  geom_boxplot()+
-  ggtitle("recovery_time-SBP")
-
-ggplot(training_set.bin, aes(x = recovery_time, y=LDL, fill = recovery_time)) + 
-  geom_boxplot()+
-  ggtitle("recovery_time-LDL")
+arrange = ggarrange(p1,p2,p3,p4, ncol = 2, nrow = 2)
+ggsave("arrangedplot2.png", arrange)
 ```
 
-```{r}
-# Recovery time and categorical data
-ggplot(data = training_set.bin, aes(x = gender, fill = recovery_time)) +
-  geom_bar(position = "fill") + 
-  ggtitle("time-gender")
-
-ggplot(data = training_set.bin, aes(x = race, fill = recovery_time)) +
-  geom_bar(position = "fill") + 
-  ggtitle("time-race")
-ggplot(data = training_set.bin, aes(x = smoking, fill = recovery_time)) +
-  geom_bar(position = "fill") + 
-  ggtitle("time-smoking")
-ggplot(data = training_set.bin, aes(x = hypertension, fill = recovery_time)) +
-  geom_bar(position = "fill") + 
-  ggtitle("time-hypertension")
-ggplot(data = training_set.bin, aes(x = diabetes, fill = recovery_time)) +
-  geom_bar(position = "fill") + 
-  ggtitle("time-diabetes")
-ggplot(data = training_set.bin, aes(x = vaccine, fill = recovery_time)) +
-  geom_bar(position = "fill") + 
-  ggtitle("time-vaccine")
-ggplot(data = training_set.bin, aes(x = severity, fill = recovery_time)) +
-  geom_bar(position = "fill") + 
-  ggtitle("time-severity")
-ggplot(data = training_set.bin, aes(x = study, fill = recovery_time)) +
-  geom_bar(position = "fill") + 
-  ggtitle("time-study")
-
-
-```
+## Modeling
 
 ### logistic Regression
 
@@ -252,18 +218,22 @@ confusionMatrix(data = rpart.pred.2,
 
 ## SVM
 
-```{r}
+```{r warning = FALSE}
 # kernlab
-set.seed(1)
-svml.fit <- train(recovery_time ~ . , 
-                  data = training_set.bin, 
+ctrl.svm = trainControl(method = "cv")
+set.seed(2023)
+svml.fit <- train(x = scale(x_train.bin),
+                  y = y_train.bin,
                   method = "svmLinear",# C parameter as kernlab
-                  tuneGrid = data.frame(C = exp(seq(-5,2,len=50))),
-                  trControl = ctrl)
+                  tuneGrid = data.frame(C = exp(seq(1,5,len=20))),
+                  trControl = ctrl.svm)
+```
 
+```{r}
 plot(svml.fit, highlight = TRUE, xTrans = log)
-
+```
 # e1071
+```{r}
 set.seed(1)
 svml.fit2 <- train(recovery_time ~ . , 
                    data = training_set.bin, 
@@ -272,7 +242,10 @@ svml.fit2 <- train(recovery_time ~ . ,
                    trControl = ctrl)
 
 plot(svml.fit2, highlight = TRUE, xTrans = log)
+```
 
+
+```{r}
 # radialsigma
 
 svmr.grid <- expand.grid(C = exp(seq(1,7,len=50)),
