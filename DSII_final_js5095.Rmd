@@ -1,15 +1,7 @@
 ---
-title: "P8106_Final_js5095"
-author: "Jianting Shi"
-output:
-  pdf_document:
-    toc: yes
-    toc_depth: 2
-  html_document:
-    df_print: paged
-    toc: yes
-    toc_depth: '2'
-
+title: "Final_proj_8106"
+output: pdf_document
+date: "2023-05-06"
 ---
 
 \newpage
@@ -107,7 +99,7 @@ theme1$strip.background$col <- rgb(.0, .2, .6, .2)
 trellis.par.set(theme1)
 
 png(height=1800, width=1800, units = "px", file="featureplot.png", res = 200)
-p1 = featurePlot(x[,c(1,8, 9, 10, 13, 14)], y, plot = "scatter", labels = c("","Y"),
+p1 = featurePlot(x.train[,c(1,8, 9, 10, 13, 14)], y.train, plot = "scatter", labels = c("","Y"),
             type = c("p"), layout = c(3, 2))
 p1
 dev.off()
@@ -135,7 +127,7 @@ ggsave("arrangedplot.png", arrange)
 ```
 
 ```{r}
-ctrl1 = trainControl(method = "repeatedcv", number = 10, repeats = 5, selectionFunction = "oneSE")
+ctrl1 = trainControl(method = "cv")
 ```
 
 ## Linear regression
@@ -252,9 +244,14 @@ gam.fit <- train(x.train, y.train,
 
 summary(gam.fit)
 
+
+
 gam.fit$bestTune
 
 gam.fit$finalModel
+par(mfrow = c(2, 3))
+
+plot(gam.fit$finalModel)
 
 ```
 
@@ -406,30 +403,30 @@ dev.off()
 ## Prediction 
 
 ```{r}
+  
+predy2.pls = predict(lm.fit, newdata = x.test)
+mean((y.test-predy2.pls)^2)
 
-predy2.pls = predict(lm.fit, newdata = x2)
-mean((y2-predy2.pls)^2)
+predy2.pls = predict(ridge.fit, newdata = x.test)
+mean((y.test-predy2.pls)^2)
 
-predy2.pls = predict(ridge.fit, newdata = x2)
-mean((y2-predy2.pls)^2)
+predy2.pls = predict(enet.fit, newdata = x.test)
+mean((y.test-predy2.pls)^2)
 
-predy2.pls = predict(enet.fit, newdata = x2)
-mean((y2-predy2.pls)^2)
+predy2.pls = predict(pls.fit, newdata = x.test)
+mean((y.test-predy2.pls)^2)
 
-predy2.pls = predict(pls.fit, newdata = x2)
-mean((y2-predy2.pls)^2)
+predy2.pcr = predict(pcr.fit, newdata = x.test)
+mean((y.test-predy2.pcr)^2)
 
-predy2.pcr = predict(pcr.fit, newdata = x2)
-mean((y2-predy2.pcr)^2)
+predy2.mars = predict(mars.fit, newdata = x.test)
+mean((y.test-predy2.mars)^2)
 
-predy2.mars = predict(mars.fit, newdata = x2)
-mean((y2-predy2.mars)^2)
+predy2.lasso = predict(lasso.fit, newdata = x.test)
+mean((y.test-predy2.lasso)^2)
 
-predy2.lasso = predict(lasso.fit, newdata = x2)
-mean((y2-predy2.lasso)^2)
-
-predy2.gam = predict(gam.fit, newdata = x2)
-mean((y2-predy2.gam)^2)
+predy2.gam = predict(gam.fit, newdata = x.test)
+mean((y.test-predy2.gam)^2)
 
 
 ```
