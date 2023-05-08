@@ -40,6 +40,7 @@ library(corrplot)
 library(RColorBrewer) 
 library(gplots)
 library(jpeg)
+library(rpart.plot)
 library(randomForest)
 library(ranger)
 library(gbm)
@@ -290,11 +291,26 @@ grid.arrange(p1, p2, p3, p4, ncol = 2, nrow = 2)
 dev.off()
 
 ```
+
+## Regression Tree
 ```{r}
+set.seed(1)
+rpart.fit <- train(x=x.train,
+                   y = y.train,
+                   method = "rpart",
+                    tuneGrid = data.frame(cp = exp(seq(-6,-2, length = 50))),
+                    trControl = ctrl1)
+ggplot(rpart.fit, highlight = TRUE)
+rpart.plot(rpart.fit$finalModel)
 
 
 
 ```
+
+
+
+
+ 
 
 
 ## random forest
@@ -367,7 +383,7 @@ summary(gbm.fit$finalModel, las = 2, cBars = 19, cex.names = 0.6)
 
 ```{r}
 set.seed(1)
-resamp = resamples(list(enet = enet.fit, pls = pls.fit, gam = gam.fit, mars = mars.fit,rf = rf.fit,gbm = gbm.fit))
+resamp = resamples(list(enet = enet.fit, pls = pls.fit, gam = gam.fit, mars = mars.fit,rf = rf.fit,gbm = gbm.fit, rpart = rpart.fit))
 summary(resamp)
 parallelplot(resamp, metric = "RMSE")
 
