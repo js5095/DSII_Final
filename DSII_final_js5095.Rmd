@@ -321,13 +321,8 @@ rf.grid <- expand.grid(mtry = 1:14,
 splitrule = "variance",
 min.node.size = 1:6)
 set.seed(1)
-<<<<<<< HEAD
-rf.fit <- train(recovery_time ~ . ,
-dat1[trainRows,],
-=======
 rf.fit <- train(x.train,
                 y.train,
->>>>>>> 35cf6bf1dce673344cf049f6d169dfe0e0740bb2
 method = "ranger",
 tuneGrid = rf.grid,
 trControl = ctrl1)
@@ -343,29 +338,18 @@ mean((y.test-rf.pred)^2)
 
 ```
 
-## Boosting
 
 ```{r}
 gbm.grid <- expand.grid(n.trees = c(2000,4000,6000,8000,10000),
 interaction.depth = 1:3,
 shrinkage = c(0.005,0.01),
 n.minobsinnode = c(1))
-
 set.seed(1)
-
-gbm.fit <- train(recovery_time ~ . ,
-data = dat1[trainRows,],
-method = "gbm",
-tuneGrid = gbm.grid,
-trControl = ctrl1,
-verbose = FALSE)
-
 gbm.fit <- train(x.train,y.train,
                  method = "gbm",
                  tuneGrid = gbm.grid,
                  trControl = ctrl1,
                  verbose = FALSE)
-
 ```
 
 ```{r}
