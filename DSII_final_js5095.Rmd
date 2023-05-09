@@ -1,11 +1,14 @@
 ---
-title: "Final_proj_8106"
-output: pdf_document
-date: "2023-05-06"
+title: "final_proj"
+author: "Me"
+date: "Today"
+output:
+  pdf_document:
+    latex_engine: xelatex
+header-includes:
+  - \usepackage{fontspec}
+  - \usepackage{xeCJK}
 ---
-
-\newpage
-\newpage
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
@@ -37,6 +40,7 @@ library(randomForest)
 library(ranger)
 library(gbm)
 library(pROC)
+ 
 ```
 
 
@@ -326,6 +330,7 @@ trControl = ctrl1)
 ```
 
 ```{r}
+rf.fit$bestTune
 ggplot(rf.fit, highlight = TRUE)
 ```
 ```{r}
@@ -351,6 +356,7 @@ gbm.fit <- train(x.train,y.train,
 
 ```{r}
 ggplot(gbm.fit, highlight = TRUE)
+gbm.fit$bestTune
 gbm.pred <- predict(gbm.fit, newdata = x.test)
 mean((y.test-gbm.pred)^2)
 ```

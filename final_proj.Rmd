@@ -1,9 +1,15 @@
 ---
-title: "Final_proj"
-output: pdf_document
-date: "2023-05-06"
+title: "My Document"
+author: "Me"
+date: "Today"
+output:
+  pdf_document:
+    latex_engine: xelatex
+header-includes:
+  - \usepackage{fontspec}
+  - \usepackage{xeCJK}
 ---
-```{r}
+```{r include=FALSE}
 library(tidyverse)
 library(ggplot2)
 library(mlbench)
@@ -16,6 +22,7 @@ library(vip)
 library(AppliedPredictiveModeling)
 library(MASS)
 library(rpart.plot)
+library(ggpubr)
 
 ```
 
@@ -76,13 +83,17 @@ p1 <- ggplot(training_set.bin,aes(x = recovery_time, y = age)) +
   geom_boxplot()
 p2 <- ggplot(training_set.bin,aes(x = recovery_time, y = bmi)) +
   geom_boxplot()
+p5 <- ggplot(training_set.bin,aes(x = recovery_time, y = height)) +
+  geom_boxplot()
+p6 <- ggplot(training_set.bin,aes(x = recovery_time, y = weight)) +
+  geom_boxplot()
 p3 <- ggplot(training_set.bin,aes(x = recovery_time, y = SBP)) +
   geom_boxplot()
 p4 <- ggplot(training_set.bin,aes(x = recovery_time, y = LDL)) +
   geom_boxplot()
 
-arrange = ggarrange(p1,p2,p3,p4, ncol = 2, nrow = 2)
-ggsave("arrangedplot2.png", arrange)
+arrange = ggarrange(p1,p2,p5,p6, p3,p4, ncol = 3, nrow = 2)
+ggsave("arrangedplot3.png", arrange)
 ```
 
 ## Modeling
@@ -167,6 +178,7 @@ plot(lda(y_train.bin~x_train.bin))
 ```{r}
 
 #Performance
+coef(lda.fit$finalModel)
 
 
 # ROC Curve
@@ -222,11 +234,14 @@ confusionMatrix(data = rpart.pred.2,
 ### Model Comparison
 ```{r}
 set.seed(2023)
-res <- resamples(list(Logit = logit.fit, Mars = mars.fit, lda = lda.fit, rpart=rpart.fit))
+res <- caret::resamples(list(Logit = logit.fit, Mars = mars.fit, lda = lda.fit, rpart=rpart.fit),metric = c("F", "ROC", "Accuracy", "Precision"),
+                 method = "cv",index = createFolds(trainData$binary_outcome, k = 10))
+
 summary(res)
-
-
 ```
+
+
+
 
 
 
