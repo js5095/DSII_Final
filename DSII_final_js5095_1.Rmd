@@ -375,23 +375,18 @@ las = 2, horiz = TRUE, cex.names = 0.7,
 col = colorRampPalette(colors = c("cyan","blue"))(19))
 ```
 ```{r}
+
+png(file="PDP(RF and boosting).png", height=1800, width=1800, units = "px", res=200)
 p1 <- pdp::partial(rf.fit, pred.var = c("bmi"),
 plot = TRUE, rug = TRUE,
 plot.engine = "ggplot") + ggtitle("PDP (RF)")
 
+png(file="PDP(boosting).png", height=1800, width=1800, units = "px", res=200)
 p2 <- pdp::partial(gbm.fit, pred.var = c("bmi"),
 plot = TRUE, rug = TRUE,
-plot.engine = "ggplot") + ggtitle("PDP (GBM)")
+plot.engine = "ggplot") + ggtitle("PDP (boosting)")
 
-p3 <- pdp::partial(rf.fit, pred.var = c("age"),
-plot = TRUE, rug = TRUE,
-plot.engine = "ggplot") + ggtitle("PDP (RF)")
-
-p4 <- pdp::partial(gbm.fit, pred.var = c("age"),
-plot = TRUE, rug = TRUE,
-plot.engine = "ggplot") + ggtitle("PDP (GBM)")
-
-grid.arrange(p1, p2, p3, p4, nrow = 1)
+grid.arrange(p1, p2, nrow = 1)
 ```
 
 ```{r}
@@ -403,7 +398,7 @@ summary(gbm.fit$finalModel, las = 2, cBars = 19, cex.names = 0.6)
 
 ```{r}
 set.seed(1)
-resamp = resamples(list(enet = enet.fit, pls = pls.fit, gam = gam.fit, mars = mars.fit,rf = rf.fit,gbm = gbm.fit, rpart = rpart.fit))
+resamp = resamples(list(lm = lm.fit, lasso = lasso.fit, ridge = ridge.fit, enet = enet.fit, pls = pls.fit, gam = gam.fit, mars = mars.fit,rf = rf.fit,gbm = gbm.fit, rpart = rpart.fit))
 summary(resamp)
 parallelplot(resamp, metric = "RMSE")
 
