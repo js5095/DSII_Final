@@ -15,7 +15,7 @@ knitr::opts_chunk$set(echo = TRUE)
 ```
 
 
-```{r, echo = T, message = FALSE, results='hide', warning=FALSE}
+```{r, echo = T, message = FALSE, results='hide', warning=FALSE, include=FALSE}
 library(caret)
 library(mlbench)
 library(pdp)
