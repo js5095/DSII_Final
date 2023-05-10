@@ -1,4 +1,4 @@
-This is XeTeX, Version 3.141592653-2.6-0.999995 (TeX Live 2023) (preloaded format=xelatex 2023.5.8)  8 MAY 2023 19:20
+This is XeTeX, Version 3.141592653-2.6-0.999995 (TeX Live 2023) (preloaded format=xelatex 2023.5.8)  9 MAY 2023 21:44
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -872,7 +872,7 @@ Package fontspec Info: Font family 'FandolFang-Regular(0)' created for font
 (fontspec)             - 'small caps'  (m/sc) with NFSS spec.: 
 
 LaTeX Font Info:    Font shape `TU/FandolFang-Regular(0)/m/n' will be
-(Font)              scaled to size 9.4104pt on input line 136.
+(Font)              scaled to size 9.4104pt on input line 139.
 [1
 
 ]
@@ -888,34 +888,46 @@ File: final_proj_files/figure-latex/unnamed-chunk-12-1.pdf Graphic file (type pd
 File: final_proj_files/figure-latex/unnamed-chunk-12-2.pdf Graphic file (type pdf)
 <use final_proj_files/figure-latex/unnamed-chunk-12-2.pdf>
 [8]
+File: final_proj_files/figure-latex/unnamed-chunk-12-3.pdf Graphic file (type pdf)
+<use final_proj_files/figure-latex/unnamed-chunk-12-3.pdf>
+[9]
+File: final_proj_files/figure-latex/unnamed-chunk-12-4.pdf Graphic file (type pdf)
+<use final_proj_files/figure-latex/unnamed-chunk-12-4.pdf>
+File: final_proj_files/figure-latex/unnamed-chunk-12-5.pdf Graphic file (type pdf)
+<use final_proj_files/figure-latex/unnamed-chunk-12-5.pdf>
+[10]
+File: final_proj_files/figure-latex/unnamed-chunk-12-6.pdf Graphic file (type pdf)
+<use final_proj_files/figure-latex/unnamed-chunk-12-6.pdf>
+[11]
 File: final_proj_files/figure-latex/unnamed-chunk-13-1.pdf Graphic file (type pdf)
 <use final_proj_files/figure-latex/unnamed-chunk-13-1.pdf>
-[9]
-Overfull \vbox (0.28412pt too high) detected at line 585
+[12]
+Overfull \vbox (0.28412pt too high) detected at line 636
  []
 
-[10]
+[13]
 File: final_proj_files/figure-latex/unnamed-chunk-14-1.pdf Graphic file (type pdf)
 <use final_proj_files/figure-latex/unnamed-chunk-14-1.pdf>
-[11]
+[14]
 File: final_proj_files/figure-latex/unnamed-chunk-15-1.pdf Graphic file (type pdf)
 <use final_proj_files/figure-latex/unnamed-chunk-15-1.pdf>
-[12]
+[15]
 File: final_proj_files/figure-latex/unnamed-chunk-16-1.pdf Graphic file (type pdf)
 <use final_proj_files/figure-latex/unnamed-chunk-16-1.pdf>
+[16]
 File: final_proj_files/figure-latex/unnamed-chunk-17-1.pdf Graphic file (type pdf)
 <use final_proj_files/figure-latex/unnamed-chunk-17-1.pdf>
-[13] [14] [15] (./final_proj.aux)
+[17] [18] [19] (./final_proj.aux)
 Package rerunfilecheck Info: File `final_proj.out' has not changed.
-(rerunfilecheck)             Checksum: C309B6A11EC533C6D5924BFF834BBBE1;575.
+(rerunfilecheck)             Checksum: 98BD517CD01DD4B31AC35BB1F930DA19;936.
  ) 
 Here is how much of TeX's memory you used:
- 19245 strings out of 478705
- 378085 string characters out of 5847641
- 1880873 words of memory out of 5000000
- 39093 multiletter control sequences out of 15000+600000
- 516475 words of font info for 72 fonts, out of 8000000 for 9000
+ 19285 strings out of 478705
+ 379993 string characters out of 5847641
+ 1875873 words of memory out of 5000000
+ 39127 multiletter control sequences out of 15000+600000
+ 516491 words of font info for 74 fonts, out of 8000000 for 9000
  14 hyphenation exceptions out of 8191
  86i,6n,121p,553b,862s stack positions out of 10000i,1000n,20000p,200000b,200000s
 
-Output written on final_proj.pdf (15 pages).
+Output written on final_proj.pdf (19 pages).

@@ -1,4 +1,4 @@
-This is XeTeX, Version 3.141592653-2.6-0.999995 (TeX Live 2023) (preloaded format=xelatex 2023.5.8)  8 MAY 2023 19:39
+This is XeTeX, Version 3.141592653-2.6-0.999995 (TeX Live 2023) (preloaded format=xelatex 2023.5.8)  9 MAY 2023 22:26
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -809,54 +809,53 @@ Package fontspec Info: Font family 'FandolFang-Regular(0)' created for font
 (fontspec)             <->s*[0.941043990458295]"[FandolFang-Regular.otf]/OT:language=dflt;"
 (fontspec)             - 'small caps'  (m/sc) with NFSS spec.: 
 
+LaTeX Font Info:    Font shape `TU/FandolFang-Regular(0)/m/n' will be
+(Font)              scaled to size 9.4104pt on input line 162.
 [1
 
-]
-LaTeX Font Info:    Font shape `TU/FandolFang-Regular(0)/m/n' will be
-(Font)              scaled to size 9.4104pt on input line 191.
-[2] [3] [4] [5] [6]
+] [2] [3] [4] [5] [6]
 File: DSII_final_js5095_files/figure-latex/unnamed-chunk-7-1.pdf Graphic file (type pdf)
 <use DSII_final_js5095_files/figure-latex/unnamed-chunk-7-1.pdf>
 [7]
 File: DSII_final_js5095_files/figure-latex/unnamed-chunk-8-1.pdf Graphic file (type pdf)
 <use DSII_final_js5095_files/figure-latex/unnamed-chunk-8-1.pdf>
-[8] [9] [10]
+[8] [9]
 File: DSII_final_js5095_files/figure-latex/unnamed-chunk-9-1.pdf Graphic file (type pdf)
 <use DSII_final_js5095_files/figure-latex/unnamed-chunk-9-1.pdf>
-[11]
+[10]
 File: DSII_final_js5095_files/figure-latex/unnamed-chunk-10-1.pdf Graphic file (type pdf)
 <use DSII_final_js5095_files/figure-latex/unnamed-chunk-10-1.pdf>
-[12] [13]
+[11] [12]
 File: DSII_final_js5095_files/figure-latex/unnamed-chunk-11-1.pdf Graphic file (type pdf)
 <use DSII_final_js5095_files/figure-latex/unnamed-chunk-11-1.pdf>
 File: DSII_final_js5095_files/figure-latex/unnamed-chunk-11-2.pdf Graphic file (type pdf)
 <use DSII_final_js5095_files/figure-latex/unnamed-chunk-11-2.pdf>
-[14]
+[13]
 File: DSII_final_js5095_files/figure-latex/unnamed-chunk-13-1.pdf Graphic file (type pdf)
 <use DSII_final_js5095_files/figure-latex/unnamed-chunk-13-1.pdf>
-[15]
+[14]
 File: DSII_final_js5095_files/figure-latex/unnamed-chunk-16-1.pdf Graphic file (type pdf)
 <use DSII_final_js5095_files/figure-latex/unnamed-chunk-16-1.pdf>
-[16]
+[15]
 File: DSII_final_js5095_files/figure-latex/unnamed-chunk-17-1.pdf Graphic file (type pdf)
 <use DSII_final_js5095_files/figure-latex/unnamed-chunk-17-1.pdf>
-[17]
+[16]
 File: DSII_final_js5095_files/figure-latex/unnamed-chunk-18-1.pdf Graphic file (type pdf)
 <use DSII_final_js5095_files/figure-latex/unnamed-chunk-18-1.pdf>
-[18] [19]
+[17] [18]
 File: DSII_final_js5095_files/figure-latex/unnamed-chunk-19-1.pdf Graphic file (type pdf)
 <use DSII_final_js5095_files/figure-latex/unnamed-chunk-19-1.pdf>
-[20] [21] [22] (./DSII_final_js5095.aux)
+[19] [20] [21] (./DSII_final_js5095.aux)
 Package rerunfilecheck Info: File `DSII_final_js5095.out' has not changed.
 (rerunfilecheck)             Checksum: F9BBC7322D49EC8EBC522663DB221012;1231.
  ) 
 Here is how much of TeX's memory you used:
  18879 strings out of 478705
  373000 string characters out of 5847641
- 1872873 words of memory out of 5000000
+ 1870873 words of memory out of 5000000
  38742 multiletter control sequences out of 15000+600000
  516475 words of font info for 72 fonts, out of 8000000 for 9000
  14 hyphenation exceptions out of 8191
  86i,6n,121p,495b,852s stack positions out of 10000i,1000n,20000p,200000b,200000s
 
-Output written on DSII_final_js5095.pdf (22 pages).
+Output written on DSII_final_js5095.pdf (21 pages).

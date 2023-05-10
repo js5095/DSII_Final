@@ -26,6 +26,7 @@ library(ggpubr)
 
 ```
 
+# Import data
 ```{r}
 l<-load("recovery.Rdata")
 
@@ -58,19 +59,20 @@ head(reco.data)
 reco.data.bin<-reco.data%>%
   mutate(recovery_time = factor(ifelse(recovery_time>30,"long","short")))
 ```
-
+## Split data
 ```{r}
 set.seed(2023)
 rowtrain <- createDataPartition(y=reco.data.bin$recovery_time, p=0.8, list=FALSE)
 training_set.bin <- reco.data.bin[rowtrain,]
 test_set.bin <- reco.data.bin[-rowtrain,]
 x_train.bin <- model.matrix(recovery_time~.,training_set.bin)[,-1]
-y_train.bin <- training_set.bin$recovery_time
+y_train.bin <- factor(training_set.bin$recovery_time)
 x_test.bin <- model.matrix(recovery_time~.,test_set.bin)[,-1]
-y_test.bin <- test_set.bin$recovery_time
+y_test.bin <- factor(test_set.bin$recovery_time)
+contrasts(y_train.bin)
 ```
 
-## EDA
+# EDA
 ```{r}
 table(y_train.bin)
 ggplot(training_set.bin, aes(y_train.bin)) + 
@@ -96,9 +98,9 @@ arrange = ggarrange(p1,p2,p5,p6, p3,p4, ncol = 3, nrow = 2)
 ggsave("arrangedplot3.png", arrange)
 ```
 
-## Modeling
+# Modeling
 
-### logistic Regression
+## logistic Regression
 
 ```{r}
 ctrl <- trainControl(method = "repeatedcv",
@@ -136,7 +138,7 @@ confusionMatrix(data = logit.pred.2   ,
 The accuracy of logistic regression with the best tunning parameter is 0.6885
 
 
-### MARS
+## MARS
 ```{r}
 set.seed(2023)
 mars.fit <- train(x = x_train.bin,
@@ -158,13 +160,24 @@ pred.mars.1 <- predict(mars.fit, newdata  = x_test.bin, type = "prob")[,2]
 mars.roc <- roc(y_test.bin, pred.mars.1)
 plot(mars.roc, legacy.axes = TRUE, print.auc = TRUE)
 plot(smooth(mars.roc), col = 4, add = TRUE)
-
 # Confusion Matrix
 pred.mars.2 <- predict(mars.fit, newdata  = x_test.bin)
 confusionMatrix(data = pred.mars.2,
                 reference = y_test.bin)
+p1 <- pdp::partial(mars.fit, pred.var = c("bmi"), grid.resolution = 10) %>% autoplot()
+p2 <- pdp::partial(mars.fit, pred.var = c("SBP"), grid.resolution = 10) %>% autoplot()
+p4 <- pdp::partial(mars.fit, pred.var = c("bmi", "SBP"), 
+                   grid.resolution = 10) %>%
+      pdp::plotPartial(levelplot = FALSE, zlab = "yhat", drape = TRUE, 
+                       screen = list(z = 20, x = -60))
+p1
+p2
+p4
+
+vip(mars.fit$finalModel)
 ```
-### LDA
+
+## LDA
 ```{r}
 #LDA
 lda.fit <- train(x = x_train.bin,
@@ -193,7 +206,7 @@ confusionMatrix(data = lda.pred.2,
                 reference = y_test.bin)
 
 ```
-
+## Classification Tree
 ```{r}
 
 set.seed(2023)
@@ -231,7 +244,7 @@ confusionMatrix(data = rpart.pred.2,
 
 
 
-### Model Comparison
+## Model Comparison
 ```{r}
 set.seed(2023)
 res <- caret::resamples(list(Logit = logit.fit, Mars = mars.fit, lda = lda.fit, rpart=rpart.fit),metric = c("F", "ROC", "Accuracy", "Precision"),

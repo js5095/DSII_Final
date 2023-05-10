@@ -155,7 +155,7 @@ ridge.fit <- train(x.train, y.train,
                    preProc = c("center", "scale"),
                    trControl = ctrl1)
 
-png(file="ridge.tiff", height=1800, width=1800, units = "px", res=200)
+png(file="ridge.png", height=1800, width=1800, units = "px", res=200)
 plot(ridge.fit, xTrans = log)
 dev.off()
 
@@ -233,7 +233,7 @@ pls.fit <- train(x.train, y.train,
                  preProcess = c("center", "scale"))
 
 ggplot(pls.fit, highlight = TRUE)
-ggsave("pls.tiff", dpi="print")
+ggsave("pls.png", dpi="print")
 ```
 
 
@@ -279,17 +279,16 @@ coef(mars.fit$finalModel)
 
 summary(mars.fit)
 
-png(file="mars.png", height=1800, width=1800, units = "px", res=200)
+png(file="marspdp.png", height=1800, width=1800, units = "px", res=200)
 p1 <- pdp::partial(mars.fit, pred.var = c("bmi"), grid.resolution = 10) %>% autoplot()
-p2 <- pdp::partial(mars.fit, pred.var = c("height"), grid.resolution = 10) %>% autoplot()
-p3 <- pdp::partial(mars.fit, pred.var = c("weight"), grid.resolution = 10) %>% autoplot()
-p4 <- pdp::partial(mars.fit, pred.var = c("bmi", "height"), 
+p2 <- pdp::partial(mars.fit, pred.var = c("SBP"), grid.resolution = 10) %>% autoplot()
+p4 <- pdp::partial(mars.fit, pred.var = c("bmi", "SBP"), 
                    grid.resolution = 10) %>%
       pdp::plotPartial(levelplot = FALSE, zlab = "yhat", drape = TRUE, 
                        screen = list(z = 20, x = -60))
-
-grid.arrange(p1, p2, p3, p4, ncol = 2, nrow = 2)
-dev.off()
+p1
+p2
+p4
 
 ```
 
@@ -299,7 +298,7 @@ set.seed(1)
 rpart.fit <- train(x=x.train,
                    y = y.train,
                    method = "rpart",
-                    tuneGrid = data.frame(cp = exp(seq(-6,-2, length = 50))),
+                    tuneGrid = data.frame(cp = exp(seq(-6,-4, length = 50))),
                     trControl = ctrl1)
 ggplot(rpart.fit, highlight = TRUE)
 rpart.plot(rpart.fit$finalModel)
