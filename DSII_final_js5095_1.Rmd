@@ -1,27 +1,18 @@
 ---
-<<<<<<< HEAD
-title: "final_proj"
-author: "Me"
-date: "Today"
-output:
-  pdf_document:
-    latex_engine: xelatex
-header-includes:
-  - \usepackage{fontspec}
-  - \usepackage{xeCJK}
-=======
 title: "Final_proj_8106"
 output: html_document
 date: "2023-05-06"
->>>>>>> 28a3f1408de15cc81cf7930761ce5fc391fd1717
 ---
+
+\newpage
+\newpage
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
 
-```{r, echo = T, message = FALSE, results='hide', warning=FALSE, include=FALSE}
+```{r, echo = T, message = FALSE, results='hide', warning=FALSE}
 library(caret)
 library(mlbench)
 library(pdp)
@@ -161,7 +152,7 @@ ridge.fit <- train(x.train, y.train,
                    preProc = c("center", "scale"),
                    trControl = ctrl1)
 
-png(file="ridge.png", height=1800, width=1800, units = "px", res=200)
+png(file="ridge.tiff", height=1800, width=1800, units = "px", res=200)
 plot(ridge.fit, xTrans = log)
 dev.off()
 
@@ -239,7 +230,7 @@ pls.fit <- train(x.train, y.train,
                  preProcess = c("center", "scale"))
 
 ggplot(pls.fit, highlight = TRUE)
-ggsave("pls.png", dpi="print")
+ggsave("pls.tiff", dpi="print")
 ```
 
 
@@ -285,16 +276,17 @@ coef(mars.fit$finalModel)
 
 summary(mars.fit)
 
-png(file="marspdp.png", height=1800, width=1800, units = "px", res=200)
+png(file="mars.png", height=1800, width=1800, units = "px", res=200)
 p1 <- pdp::partial(mars.fit, pred.var = c("bmi"), grid.resolution = 10) %>% autoplot()
-p2 <- pdp::partial(mars.fit, pred.var = c("SBP"), grid.resolution = 10) %>% autoplot()
-p4 <- pdp::partial(mars.fit, pred.var = c("bmi", "SBP"), 
+p2 <- pdp::partial(mars.fit, pred.var = c("height"), grid.resolution = 10) %>% autoplot()
+p3 <- pdp::partial(mars.fit, pred.var = c("weight"), grid.resolution = 10) %>% autoplot()
+p4 <- pdp::partial(mars.fit, pred.var = c("bmi", "height"), 
                    grid.resolution = 10) %>%
       pdp::plotPartial(levelplot = FALSE, zlab = "yhat", drape = TRUE, 
                        screen = list(z = 20, x = -60))
-p1
-p2
-p4
+
+grid.arrange(p1, p2, p3, p4, ncol = 2, nrow = 2)
+dev.off()
 
 ```
 
@@ -304,7 +296,7 @@ set.seed(1)
 rpart.fit <- train(x=x.train,
                    y = y.train,
                    method = "rpart",
-                    tuneGrid = data.frame(cp = exp(seq(-6,-4, length = 50))),
+                    tuneGrid = data.frame(cp = exp(seq(-6,-2, length = 50))),
                     trControl = ctrl1)
 ggplot(rpart.fit, highlight = TRUE)
 rpart.plot(rpart.fit$finalModel)
@@ -334,10 +326,12 @@ tuneGrid = rf.grid,
 trControl = ctrl1)
 ```
 
+
 ```{r}
-rf.fit$bestTune
 ggplot(rf.fit, highlight = TRUE)
 ```
+
+
 ```{r}
 rf.pred <- predict(rf.fit, newdata = x.test)
 mean((y.test-rf.pred)^2)
@@ -361,7 +355,6 @@ gbm.fit <- train(x.train,y.train,
 
 ```{r}
 ggplot(gbm.fit, highlight = TRUE)
-gbm.fit$bestTune
 gbm.pred <- predict(gbm.fit, newdata = x.test)
 mean((y.test-gbm.pred)^2)
 ```
@@ -381,6 +374,20 @@ barplot(sort(ranger::importance(rf2.final.per), decreasing = FALSE),
 las = 2, horiz = TRUE, cex.names = 0.7,
 col = colorRampPalette(colors = c("cyan","blue"))(19))
 ```
+```{r}
+
+png(file="PDP(RF and boosting).png", height=1800, width=1800, units = "px", res=200)
+p1 <- pdp::partial(rf.fit, pred.var = c("bmi"),
+plot = TRUE, rug = TRUE,
+plot.engine = "ggplot") + ggtitle("PDP (RF)")
+
+png(file="PDP(boosting).png", height=1800, width=1800, units = "px", res=200)
+p2 <- pdp::partial(gbm.fit, pred.var = c("bmi"),
+plot = TRUE, rug = TRUE,
+plot.engine = "ggplot") + ggtitle("PDP (boosting)")
+
+grid.arrange(p1, p2, nrow = 1)
+```
 
 ```{r}
 summary(gbm.fit$finalModel, las = 2, cBars = 19, cex.names = 0.6)
@@ -391,7 +398,7 @@ summary(gbm.fit$finalModel, las = 2, cBars = 19, cex.names = 0.6)
 
 ```{r}
 set.seed(1)
-resamp = resamples(list(enet = enet.fit, pls = pls.fit, gam = gam.fit, mars = mars.fit,rf = rf.fit,gbm = gbm.fit, rpart = rpart.fit))
+resamp = resamples(list(lm = lm.fit, lasso = lasso.fit, ridge = ridge.fit, enet = enet.fit, pls = pls.fit, gam = gam.fit, mars = mars.fit,rf = rf.fit,gbm = gbm.fit, rpart = rpart.fit))
 summary(resamp)
 parallelplot(resamp, metric = "RMSE")
 
